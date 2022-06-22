@@ -20,7 +20,7 @@ import yaml
 ### QUICK AND DIRTY !!!
 
 def dssc_auth(cfg):
-    ###Authenticates to Smart Check###
+    """Authenticates to Smart Check"""
 
     content_type = "application/vnd.com.trendmicro.argus.webhook.v1+json"
 
@@ -47,7 +47,7 @@ def dssc_auth(cfg):
 
 
 def dssc_latest_scan(cfg, token):
-    ###Queries the latest scan of the given image###
+    """Queries the latest scan of the given image"""
 
     content_type = "application/vnd.com.trendmicro.argus.webhook.v1+json"
 
@@ -77,7 +77,7 @@ def dssc_latest_scan(cfg, token):
 
 
 def dssc_scan(cfg, scan_id, token):
-    ###Queries the scan of the given image from Smart Check###
+    """Queries the scan of the given image from Smart Check"""
 
     content_type = "application/vnd.com.trendmicro.argus.webhook.v1+json"
 
@@ -92,6 +92,8 @@ def dssc_scan(cfg, scan_id, token):
     scanners_list = response["findings"].get("scanners", {})
     database_time = scanners_list.get("vulnerabilities", {}).get("updated", {})
     scan_requested_time = response["details"].get("requested", {})
+    href = response.get("href", {})
+    status = response.get("status", {})
 
     # iterate layers
     result_list = response["details"].get("results", {})
@@ -175,19 +177,25 @@ def dssc_scan(cfg, scan_id, token):
 
     scan_info = {
         "id": scan_id,
+        "href": href,
         "requested": scan_requested_time,
+        "status": status,
         "database_time": database_time,
-        "defcon1": vul_count_defcon1,
-        "critical": vul_count_critical,
-        "high": vul_count_high,
-        "medium": vul_count_medium,
+        "findings": {
+            "vulnerabilitites": {
+                "defcon1": vul_count_defcon1,
+                "critical": vul_count_critical,
+                "high": vul_count_high,
+                "medium": vul_count_medium,
+            }
+        }
     }
 
     return {"scan_info": scan_info, "vulns": vulns}
 
 
 def dssc_report(cfg):
-    ###Queries the scan report of the given image from Smart Check###
+    """Queries the scan report of the given image from Smart Check"""
 
     token = dssc_auth(cfg)
     scan_id = dssc_latest_scan(cfg, token)
@@ -197,6 +205,7 @@ def dssc_report(cfg):
 
 
 def create_vulns_list(dssc_vulns):
+    """Creates a dictionary for the discovered vulnerabilities"""
 
     vulnerabilities_list = []
 
@@ -221,6 +230,7 @@ def create_vulns_list(dssc_vulns):
 
 
 def main():
+    """main"""
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--config_path", type=str, help="path to config.yml")
