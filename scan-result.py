@@ -169,7 +169,7 @@ def dssc_scan(cfg, scan_id, token):
                         "version": str(vulnerable_version),
                         "severity": str(vul_severity),
                         "namespace_name": str(namespace_name),
-                        "av": str(vul_av),
+                        "attackvector": str(vul_av),
                         "description": vul.get("description", "n/a"),
                         "link": vul.get("link", "n/a"),
                         "fixed_by": vul.get("fixedBy", "n/a"),
@@ -216,6 +216,7 @@ def create_vulns_list(dssc_vulns):
             "advisory": str(dssc_vulns.get(vul, {}).get("link", {})),
             "rating": str(dssc_vulns.get(vul, {}).get("severity", {})),
             "description": str(dssc_vulns.get(vul, {}).get("description", {})),
+            "attackvector": str(dssc_vulns.get(vul, {}).get("attackvector", {})),
             "source": {
                 "name": str(dssc_vulns.get(vul, {}).get("namespace_name", {}))
             }
