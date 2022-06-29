@@ -17,8 +17,6 @@ import requests
 import yaml
 
 
-### QUICK AND DIRTY !!!
-
 def dssc_auth(cfg):
     """Authenticates to Smart Check"""
 
@@ -209,10 +207,13 @@ def create_vulns_list(dssc_vulns):
 
     vulnerabilities_list = []
 
-    for vul in {k: dssc_vulns[k] for k in sorted(dssc_vulns)}:
+    for vul in {k: dssc_vulns[k] for k in sorted(dssc_vulns, reverse=True)}:
 
         vulnerabililty = {
             "id": vul,
+            "name": str(dssc_vulns.get(vul, {}).get("name", {})),
+            "version": str(dssc_vulns.get(vul, {}).get("version", {})),
+            "fixed_by": str(dssc_vulns.get(vul, {}).get("fixed_by", {})),
             "advisory": str(dssc_vulns.get(vul, {}).get("link", {})),
             "rating": str(dssc_vulns.get(vul, {}).get("severity", {})),
             "description": str(dssc_vulns.get(vul, {}).get("description", {})),
@@ -234,10 +235,8 @@ def main():
     """main"""
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "--config_path", type=str, help="path to config.yml")
     parser.add_argument("-n", "--name", type=str, help="image name")
     parser.add_argument("-t", "--image_tag", type=str, help="image tag")
-    parser.add_argument("-o", "--out_path", type=str, help="output directory")
     parser.add_argument("-s", "--service", type=str, help="image security url")
     parser.add_argument("-u", "--username", type=str, help="username")
     parser.add_argument("-p", "--password", type=str, help="password")
@@ -245,12 +244,6 @@ def main():
     args = parser.parse_args()
 
     config_path = "."
-    if args.config_path != None:
-        config_path = args.config_path
-
-    out_dir = config_path
-    if args.out_path != None:
-        out_dir = args.out_path
 
     with open(config_path + "/config.yml", "r") as ymlfile:
         cfg = yaml.load(ymlfile, Loader=yaml.FullLoader)

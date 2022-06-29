@@ -1,0 +1,19 @@
+# Your Smart Check installation
+# Can be overwritten by command line arguments
+dssc:
+  service: "<smart check url:port>"
+  username: "<smart check username>"
+  password: "<smart check password>"
+
+# The default scan result to generate
+# Can be overwritten by command line arguments
+repository:
+  name: "<repository name>"
+  image_tag: "<image tag, e.g. latest>"
+
+# If you want to limit discovered vulnerabilities to specific criticalities
+criticalities:
+  - defcon1
+  - critical
+  - high
+  - medium
